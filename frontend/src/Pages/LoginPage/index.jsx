@@ -1,6 +1,10 @@
 import React, { Component } from 'react'
+import {connect} from 'react-redux';
+
 import Login from "../../Components/Login";
 import {makeRequest}  from "../../Utils/index";
+
+ import {userloginrequest,userloginsuccess,userloginfailure} from '../Store/Actions/index';
 export class index extends Component {
  
      handleSubmit = (e)=>{
@@ -16,11 +20,11 @@ export class index extends Component {
         formData[f.name] = f.value;
       }
     }
-
+   this.props.userloginrequest();
      makeRequest('/posts/login',{method:"POST" ,data:formData})
      .then((res)=>res.json())
-     .then((result)=>console.log(result),
-     (error)=>console.log(error.message));
+     .then((result)=>this.props.userloginsuccess(result),
+     (error)=>this.props.userloginfailure(error.message));
 
      }
 
@@ -33,4 +37,13 @@ export class index extends Component {
     }
 }
 
-export default index
+const mapDispatchToProps = {
+  userloginrequest,
+  userloginsuccess,
+  userloginfailure
+}
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(index)

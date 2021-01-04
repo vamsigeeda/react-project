@@ -1,8 +1,6 @@
 import bcrypt from 'bcrypt';
- 
- import jwt from 'jsonwebtoken';
  import {PostSchema} from '../schemas/index.js';
- //import {generateAccessToken} from '../JwtToken/index.js';
+ import {generateAccessToken} from '../JwtToken/index.js';
 
  const saltRounds = 10;
  export const getPosts = (req,res)=>{
@@ -20,7 +18,13 @@ import bcrypt from 'bcrypt';
         if(!validPassword) {
             return response.status(400).send({ message: "The password is invalid" });
         }
-        response.send(user);
+        if (user) {
+           const token = generateAccessToken(user);
+           response.json({
+               token
+           }).send(user);
+            }
+        
     } catch (error) {
         response.status(500).send(error);
     }
@@ -42,7 +46,6 @@ import bcrypt from 'bcrypt';
       
       const newPost = new PostSchema(post);
       console.log("newpost",newPost);
-      
       try {
            newPost.save(); 
           
